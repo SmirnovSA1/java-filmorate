@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class FilmController extends AbstractController<Film> {
                     " фильм, т.к. максимальная длина описания 200 символов.");
         }
 
-        if (film.getReleaseDate().isBefore(BIRTHDATE_FILM)) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Не удалось " + messagePath + " фильм, " +
                     "т.к. дата релиза не может быть раньше даты рождения кино.");
         }
