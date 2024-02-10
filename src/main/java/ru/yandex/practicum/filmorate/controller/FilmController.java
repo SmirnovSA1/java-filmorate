@@ -34,7 +34,7 @@ public class FilmController extends AbstractController<Film> {
     }
 
     @PutMapping
-    public Film updateFilm (@Valid @RequestBody Film film) throws ValidationException {
+    public Film updateFilm(@Valid @RequestBody Film film) throws ValidationException {
         log.info("Updating film: {}", film);
 
         if (!films.containsKey(film.getId())) {

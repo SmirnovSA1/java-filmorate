@@ -33,7 +33,7 @@ public class UserController extends AbstractController<User> {
     }
 
     @PutMapping
-    public User updateUser (@Valid @RequestBody User user) throws ValidationException {
+    public User updateUser(@Valid @RequestBody User user) throws ValidationException {
         log.info("Updating user: {}", user);
 
         if (!users.containsKey(user.getId())) {
