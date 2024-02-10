@@ -19,7 +19,7 @@ public class FilmController extends AbstractController<Film> {
         log.info("Adding film: {}", film);
         film.generateId();
 
-        if (film.getReleaseDate().isBefore(BIRTHDATE_FILM)) {
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Не удалось добавить фильм, " +
                     "т.к. дата релиза не может быть раньше даты рождения кино.");
         }
