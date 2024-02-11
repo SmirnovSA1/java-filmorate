@@ -45,7 +45,7 @@ public class UserController extends AbstractController<User> {
         return user;
     }
 
-    public void validate(User user, String messagePath) throws ValidationException {
+    void validate(User user, String messagePath) throws ValidationException {
         if (user.getEmail() == null || user.getEmail().trim().isBlank() || !user.getEmail().trim().contains("@")) {
             throw new ValidationException("Не удалось " + messagePath + " пользователя, " +
                     "т.к. email не заполнено или указано некорректно");

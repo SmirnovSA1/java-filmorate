@@ -46,7 +46,7 @@ public class FilmController extends AbstractController<Film> {
         return film;
     }
 
-    public void validate(Film film, String messagePath) throws ValidationException {
+    void validate(Film film, String messagePath) throws ValidationException {
         if (film.getName() == null || film.getName().trim().isBlank()) {
             throw new ValidationException("Не удалось " + messagePath + " фильм, т.к. наименование не заполнено");
         }
