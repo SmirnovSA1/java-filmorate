@@ -18,7 +18,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FilmServiceTest {
+class FilmControllerTest {
     private FilmService filmService;
     private Film film1;
     private Film film2;
