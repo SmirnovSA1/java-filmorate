@@ -16,7 +16,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class userServiceTest {
+class UserServiceTest {
     private UserService userService;
     private User user1;
     private User user2;
