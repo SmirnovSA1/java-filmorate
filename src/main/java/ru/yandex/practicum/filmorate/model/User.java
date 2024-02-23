@@ -28,6 +28,7 @@ public class User {
     public void generateId() {
         this.id = ++count;
     }
+
     public static void resetCount() {
         count = 0;
     }
