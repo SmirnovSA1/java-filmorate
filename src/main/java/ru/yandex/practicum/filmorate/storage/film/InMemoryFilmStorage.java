@@ -15,7 +15,7 @@ import java.util.Map;
 @Component
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
-    private LocalDate DATE_OF_CREATION_FILM = LocalDate.of(1895, 12, 28);
+    private LocalDate CREATIONDATE = LocalDate.of(1895, 12, 28);
     private HashMap<Integer, Film> films = new HashMap<>();
 
     @Override
@@ -38,7 +38,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film createFilm(Film film) {
-        if (film.getReleaseDate().isBefore(DATE_OF_CREATION_FILM)) {
+        if (film.getReleaseDate().isBefore(CREATIONDATE)) {
             log.error("Произошла ошибка при вызове метода createFilm");
             throw new ValidationException("Не удалось добавить фильм, " +
                     "т.к. дата релиза не может быть раньше даты создания кино.");
