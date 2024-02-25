@@ -42,6 +42,229 @@ class FilmControllerTest {
     @BeforeEach
     void setUp() {
         filmService = new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage());
+    }
+
+    @AfterEach
+    void clean() {
+        filmService.deleteAllFilms();
+        Film.resetCount();
+        User.resetCount();
+    }
+
+    @Test
+    void createFilmValid() {
+        film1 = new Film(1, "Защитник",
+                "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
+                LocalDate.of(2015, 11, 10), 123);
+        filmService.validate(film1, "добавить");
+    }
+
+    @Test
+    void createFilmInvalid() {
+        final Film film = new Film();
+        Exception exc = assertThrows(ValidationException.class, () -> filmService.validate(film,
+                "добавить"));
+        assertEquals("Не удалось добавить фильм, т.к. наименование не заполнено", exc.getMessage());
+
+        film.setName("");
+        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "добавить"));
+        assertEquals("Не удалось добавить фильм, т.к. наименование не заполнено", exc.getMessage());
+
+        film.setName("Хоббит");
+        film.setDescription("x".repeat(201));
+        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "добавить"));
+        assertEquals("Не удалось добавить фильм, т.к. максимальная длина описания 200 символов.",
+                exc.getMessage());
+
+        film.setDescription("x".repeat(100));
+        film.setReleaseDate(LocalDate.of(1888, 12, 12));
+        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "добавить"));
+        assertEquals("Не удалось добавить фильм, " +
+                        "т.к. дата релиза не может быть раньше даты рождения кино.", exc.getMessage());
+
+        film.setReleaseDate(LocalDate.of(1988, 12, 12));
+        film.setDuration(-1L);
+        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "добавить"));
+        assertEquals("Не удалось добавить фильм, " +
+                "т.к. продолжительность фильма должна быть положительной.", exc.getMessage());
+    }
+
+    @Test
+    void getFilmByIdValid() {
+        film1 = new Film(1, "Защитник",
+                "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
+                LocalDate.of(2015, 11, 10), 123);
+        filmService.createFilm(film1);
+        final Film otherFilm = filmService.getFilmById(1);
+        assertNotNull(otherFilm);
+    }
+
+    @Test
+    void getFilmByIdInvalid() {
+        film1 = new Film(1, "Защитник",
+                "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
+                LocalDate.of(2015, 11, 10), 123);
+        filmService.createFilm(film1);
+
+        Exception exc = assertThrows(NotFoundException.class, () -> filmService.getFilmById(2));
+        assertEquals("Фильм с id: 2 не найден", exc.getMessage());
+
+        final List<Film> filmList = filmService.getFilms();
+        assertNotEquals(filmList.size(), 2);
+
+        film2 = new Film(2, "Начало",
+                "Запутанный фильм Кристофера Нолана",
+                LocalDate.of(2010, 7, 8), 148);
+        assertFalse(filmList.contains(film2));
+    }
+
+    @Test
+    void getFilms() {
+        assertEquals(filmService.getFilms().size(), 0);
+        film1 = new Film(1, "Защитник",
+                "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
+                LocalDate.of(2015, 11, 10), 123);
+        filmService.createFilm(film1);
+        assertEquals(filmService.getFilms().size(), 1);
+    }
+
+    @Test
+    void updateFilmValid() {
+        film1 = new Film(1, "Защитник",
+                "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
+                LocalDate.of(2015, 11, 10), 123);
+        filmService.createFilm(film1);
+        film1.setDescription("Новое описание фильма Защитник");
+        filmService.updateFilm(film1);
+        assertEquals("Новое описание фильма Защитник", film1.getDescription());
+    }
+
+    @Test
+    void updateFilmInvalid() {
+        final Film film = new Film();
+        Exception exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "обновить"));
+        assertEquals("Не удалось обновить фильм, т.к. наименование не заполнено", exc.getMessage());
+
+        film.setName("");
+        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "обновить"));
+        assertEquals("Не удалось обновить фильм, т.к. наименование не заполнено", exc.getMessage());
+
+        film.setName("Хоббит");
+        film.setDescription("x".repeat(201));
+        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "обновить"));
+        assertEquals("Не удалось обновить фильм, т.к. максимальная длина описания 200 символов.",
+                exc.getMessage());
+
+        film.setDescription("x".repeat(100));
+        film.setReleaseDate(LocalDate.of(1888, 12, 12));
+        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "обновить"));
+        assertEquals("Не удалось обновить фильм, " +
+                "т.к. дата релиза не может быть раньше даты рождения кино.", exc.getMessage());
+
+        film.setReleaseDate(LocalDate.of(1988, 12, 12));
+        film.setDuration(-1L);
+        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "обновить"));
+        assertEquals("Не удалось обновить фильм, " +
+                "т.к. продолжительность фильма должна быть положительной.", exc.getMessage());
+    }
+
+    @Test
+    void deleteFilmByIdValid() {
+        film1 = new Film(1, "Защитник",
+                "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
+                LocalDate.of(2015, 11, 10), 123);
+        filmService.createFilm(film1);
+        Map<String, String> response = filmService.deleteFilmById(1);
+        assertEquals(response, Map.of("info", String.format("Фильм по id: 1 успешно удален")));
+        assertEquals(filmService.getFilms().size(), 0);
+    }
+
+    @Test
+    void deleteFilmByIdInvalid() {
+        Exception exc = assertThrows(NotFoundException.class, () -> filmService.getFilmById(1));
+        assertEquals("Фильм с id: 1 не найден", exc.getMessage());
+        assertFalse(filmService.getFilms().remove(film1));
+    }
+
+    @Test
+    void deleteAllFilms() {
+        film1 = new Film(1, "Защитник",
+                "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
+                LocalDate.of(2015, 11, 10), 123);
+        film2 = new Film(2, "Начало",
+                "Запутанный фильм Кристофера Нолана",
+                LocalDate.of(2010, 7, 8), 148);
+        film3 = new Film(3, "Зеленая миля",
+                "Пол Эджкомб — начальник блока смертников в тюрьме «Холодная гора», каждый из узников " +
+                        "которого однажды проходит «зеленую милю» по пути к месту казни. Пол повидал много " +
+                        "заключённых и надзирателей за время работы. Однако гигант Джон Коффи, обвинённый в " +
+                        "страшном преступлении, стал одним из самых необычных обитателей блока.",
+                LocalDate.of(1999, 12, 6), 189);
+        filmService.createFilm(film1);
+        filmService.createFilm(film2);
+        filmService.createFilm(film3);
+        Map<String, String> response = filmService.deleteAllFilms();
+        assertEquals(response, Map.of("info", String.format("Все фильмы успешно удалены")));
+        assertEquals(filmService.getFilms().size(), 0);
+    }
+
+    @Test
+    void addLikeToFilm() {
+        film1 = new Film(1, "Защитник",
+                "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
+                LocalDate.of(2015, 11, 10), 123);
+        film2 = new Film(2, "Начало",
+                "Запутанный фильм Кристофера Нолана",
+                LocalDate.of(2010, 7, 8), 148);
+        filmService.createFilm(film1);
+        filmService.createFilm(film2);
+
+        user1 = new User(1,"test@test.ru",
+                "testLogin", "Test-name",
+                LocalDate.of(2015, 11, 10));
+        user2 = new User(2,"test2@test2.ru",
+                "testLogin2", "Test-name2",
+                LocalDate.of(1994, 5, 12));
+        filmService.getUserStorage().createUser(user1);
+        filmService.getUserStorage().createUser(user2);
+
+        filmService.addLikeToFilm(1, 1);
+        filmService.addLikeToFilm(1, 2);
+        assertEquals(film1.getLikes().size(), 2);
+        assertFalse(film1.getLikes().isEmpty());
+        assertEquals(film1.getLikes(), Set.of(1, 2));
+    }
+
+    @Test
+    void deleteLikeFromFilm() {
+        film1 = new Film(1, "Защитник",
+                "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
+                LocalDate.of(2015, 11, 10), 123);
+        film2 = new Film(2, "Начало",
+                "Запутанный фильм Кристофера Нолана",
+                LocalDate.of(2010, 7, 8), 148);
+        filmService.createFilm(film1);
+        filmService.createFilm(film2);
+
+        user1 = new User(1,"test@test.ru",
+                "testLogin", "Test-name",
+                LocalDate.of(2015, 11, 10));
+        user2 = new User(2,"test2@test2.ru",
+                "testLogin2", "Test-name2",
+                LocalDate.of(1994, 5, 12));
+        filmService.getUserStorage().createUser(user1);
+        filmService.getUserStorage().createUser(user2);
+
+        filmService.addLikeToFilm(1, 1);
+        filmService.addLikeToFilm(1, 2);
+        filmService.deleteLikeFromFilm(1, 1);
+        assertEquals(film1.getLikes().size(), 1);
+        assertFalse(film1.getLikes().isEmpty());
+        assertEquals(film1.getLikes(), Set.of(2));
+    }
+
+    @Test
+    void getPopularFilms() {
         film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123);
@@ -103,6 +326,20 @@ class FilmControllerTest {
                         "злобный коротышка — лорд Фаркуад, правитель волшебного королевства, безжалостно " +
                         "согнал на Шрэково болото всех сказочных обитателей.",
                 LocalDate.of(2001, 4, 22), 90);
+
+        filmService.createFilm(film1);
+        filmService.createFilm(film2);
+        filmService.createFilm(film3);
+        filmService.createFilm(film4);
+        filmService.createFilm(film5);
+        filmService.createFilm(film6);
+        filmService.createFilm(film7);
+        filmService.createFilm(film8);
+        filmService.createFilm(film9);
+        filmService.createFilm(film10);
+        filmService.createFilm(film11);
+        filmService.createFilm(film12);
+
         user1 = new User(1,"test@test.ru",
                 "testLogin", "Test-name",
                 LocalDate.of(2015, 11, 10));
@@ -121,179 +358,6 @@ class FilmControllerTest {
         user6 = new User(6,"test6@test6.ru",
                 "testLogin6", "Test-name6",
                 LocalDate.of(1969, 6, 16));
-    }
-
-    @AfterEach
-    void clean() {
-        filmService.deleteAllFilms();
-        Film.resetCount();
-        User.resetCount();
-    }
-
-    @Test
-    void createFilmValid() {
-        filmService.validate(film1, "добавить");
-    }
-
-    @Test
-    void createFilmInvalid() {
-        final Film film = new Film();
-        Exception exc = assertThrows(ValidationException.class, () -> filmService.validate(film,
-                "добавить"));
-        assertEquals("Не удалось добавить фильм, т.к. наименование не заполнено", exc.getMessage());
-
-        film.setName("");
-        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "добавить"));
-        assertEquals("Не удалось добавить фильм, т.к. наименование не заполнено", exc.getMessage());
-
-        film.setName("Хоббит");
-        film.setDescription("x".repeat(201));
-        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "добавить"));
-        assertEquals("Не удалось добавить фильм, т.к. максимальная длина описания 200 символов.",
-                exc.getMessage());
-
-        film.setDescription("x".repeat(100));
-        film.setReleaseDate(LocalDate.of(1888, 12, 12));
-        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "добавить"));
-        assertEquals("Не удалось добавить фильм, " +
-                        "т.к. дата релиза не может быть раньше даты рождения кино.", exc.getMessage());
-
-        film.setReleaseDate(LocalDate.of(1988, 12, 12));
-        film.setDuration(-1L);
-        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "добавить"));
-        assertEquals("Не удалось добавить фильм, " +
-                "т.к. продолжительность фильма должна быть положительной.", exc.getMessage());
-    }
-
-    @Test
-    void getFilmByIdValid() {
-        filmService.createFilm(film1);
-        final Film otherFilm = filmService.getFilmById(1);
-        assertNotNull(otherFilm);
-    }
-
-    @Test
-    void getFilmByIdInvalid() {
-        filmService.createFilm(film1);
-
-        Exception exc = assertThrows(NotFoundException.class, () -> filmService.getFilmById(2));
-        assertEquals("Фильм с id: 2 не найден", exc.getMessage());
-
-        final List<Film> filmList = filmService.getFilms();
-        assertNotEquals(filmList.size(), 2);
-        assertFalse(filmList.contains(film2));
-    }
-
-    @Test
-    void getFilms() {
-        assertEquals(filmService.getFilms().size(), 0);
-        filmService.createFilm(film1);
-        assertEquals(filmService.getFilms().size(), 1);
-    }
-
-    @Test
-    void updateFilmValid() {
-        filmService.createFilm(film1);
-        film1.setDescription("Новое описание фильма Защитник");
-        filmService.updateFilm(film1);
-        assertEquals("Новое описание фильма Защитник", film1.getDescription());
-    }
-
-    @Test
-    void updateFilmInvalid() {
-        final Film film = new Film();
-        Exception exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "обновить"));
-        assertEquals("Не удалось обновить фильм, т.к. наименование не заполнено", exc.getMessage());
-
-        film.setName("");
-        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "обновить"));
-        assertEquals("Не удалось обновить фильм, т.к. наименование не заполнено", exc.getMessage());
-
-        film.setName("Хоббит");
-        film.setDescription("x".repeat(201));
-        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "обновить"));
-        assertEquals("Не удалось обновить фильм, т.к. максимальная длина описания 200 символов.",
-                exc.getMessage());
-
-        film.setDescription("x".repeat(100));
-        film.setReleaseDate(LocalDate.of(1888, 12, 12));
-        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "обновить"));
-        assertEquals("Не удалось обновить фильм, " +
-                "т.к. дата релиза не может быть раньше даты рождения кино.", exc.getMessage());
-
-        film.setReleaseDate(LocalDate.of(1988, 12, 12));
-        film.setDuration(-1L);
-        exc = assertThrows(ValidationException.class, () -> filmService.validate(film, "обновить"));
-        assertEquals("Не удалось обновить фильм, " +
-                "т.к. продолжительность фильма должна быть положительной.", exc.getMessage());
-    }
-
-    @Test
-    void deleteFilmByIdValid() {
-        filmService.createFilm(film1);
-        Map<String, String> response = filmService.deleteFilmById(1);
-        assertEquals(response, Map.of("info", String.format("Фильм по id: 1 успешно удален")));
-        assertEquals(filmService.getFilms().size(), 0);
-    }
-
-    @Test
-    void deleteFilmByIdInvalid() {
-        Exception exc = assertThrows(NotFoundException.class, () -> filmService.getFilmById(1));
-        assertEquals("Фильм с id: 1 не найден", exc.getMessage());
-        assertFalse(filmService.getFilms().remove(film1));
-    }
-
-    @Test
-    void deleteAllFilms() {
-        filmService.createFilm(film1);
-        filmService.createFilm(film2);
-        filmService.createFilm(film3);
-        Map<String, String> response = filmService.deleteAllFilms();
-        assertEquals(response, Map.of("info", String.format("Все фильмы успешно удалены")));
-        assertEquals(filmService.getFilms().size(), 0);
-    }
-
-    @Test
-    void addLikeToFilm() {
-        filmService.createFilm(film1);
-        filmService.createFilm(film2);
-        filmService.getUserStorage().createUser(user1);
-        filmService.getUserStorage().createUser(user2);
-        filmService.addLikeToFilm(1, 1);
-        filmService.addLikeToFilm(1, 2);
-        assertEquals(film1.getLikes().size(), 2);
-        assertFalse(film1.getLikes().isEmpty());
-        assertEquals(film1.getLikes(), Set.of(1, 2));
-    }
-
-    @Test
-    void deleteLikeFromFilm() {
-        filmService.createFilm(film1);
-        filmService.createFilm(film2);
-        filmService.getUserStorage().createUser(user1);
-        filmService.getUserStorage().createUser(user2);
-        filmService.addLikeToFilm(1, 1);
-        filmService.addLikeToFilm(1, 2);
-        filmService.deleteLikeFromFilm(1, 1);
-        assertEquals(film1.getLikes().size(), 1);
-        assertFalse(film1.getLikes().isEmpty());
-        assertEquals(film1.getLikes(), Set.of(2));
-    }
-
-    @Test
-    void getPopularFilms() {
-        filmService.createFilm(film1);
-        filmService.createFilm(film2);
-        filmService.createFilm(film3);
-        filmService.createFilm(film4);
-        filmService.createFilm(film5);
-        filmService.createFilm(film6);
-        filmService.createFilm(film7);
-        filmService.createFilm(film8);
-        filmService.createFilm(film9);
-        filmService.createFilm(film10);
-        filmService.createFilm(film11);
-        filmService.createFilm(film12);
 
         filmService.getUserStorage().createUser(user1);
         filmService.getUserStorage().createUser(user2);
