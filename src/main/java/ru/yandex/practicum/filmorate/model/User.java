@@ -22,7 +22,7 @@ public class User {
     @Past
     @NotNull
     private LocalDate birthday;
-    private final Set<Integer> friends = new HashSet<>();
+    private final Set<Friendship> friends = new HashSet<>();
     private static int count = 0;
 
     public void generateId() {
