@@ -26,7 +26,7 @@ public class Film {
     @Min(1)
     private long duration;
     @NotNull
-    private Genre genre;
+    private Set<Genre> genre;
     @NotNull
     private MPA mpa;
     private final Set<Integer> likes = new HashSet<>();
