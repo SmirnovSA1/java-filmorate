@@ -194,7 +194,7 @@ class UserDbStorageTest {
                 .hasSize(1)
                 .isNotEmpty();
 
-        List<User> user1FriendList = userStorage.getFriendList(user1.getId());
+        List<User> user1FriendList = userStorage.getFriendList(userWhoAddedToFriend.getId());
 
         assertThat(user1FriendList)
                 .isNotEmpty()
