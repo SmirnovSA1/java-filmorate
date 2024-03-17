@@ -6,14 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,63 +21,60 @@ import java.util.stream.Collectors;
 @Slf4j
 public class FilmService {
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final LocalDate creationDate = LocalDate.of(1895, 12, 28);
 
     public List<Film> getFilms() {
-        log.info("Получение списка фильмов");
         return filmStorage.getFilms();
     }
 
     public Film getFilmById(Integer filmId) {
-        log.info("Получение фильма по id: {}", filmId);
         return filmStorage.getFilmById(filmId);
     }
 
     public Film createFilm(Film film) {
-        log.info("Добавление (создание) фильм: {}", film);
+        validate(film, "создать");
         return filmStorage.createFilm(film);
     }
 
     public Film updateFilm(Film film) {
-        log.info("Обновление данных фильма: {}", film);
+        validate(film, "обновить");
         return filmStorage.updateFilm(film);
     }
 
     public Map<String, String> deleteFilmById(Integer filmId) {
-        log.info("Удаление фильма по id: {}", filmId);
         return filmStorage.deleteFilmById(filmId);
     }
 
     public Map<String, String> deleteAllFilms() {
-        log.info("Удаление всех фильмов");
         return filmStorage.deleteAllFilms();
     }
 
     public Film addLikeToFilm(Integer filmId, Integer userId) {
-        final Film film = filmStorage.getFilmById(filmId);
-        final User user = userStorage.getUserById(userId);
-        log.info("Пользователь {} добавляет лайк фильму {}", user.getName(), film.getName());
-
-        film.getLikes().add(userId);
-        log.info("Пользователь {} поставил лайка фильму {}", user.getName(), film.getName());
-        return film;
+        return filmStorage.addLikeToFilm(filmId, userId);
     }
 
     public Film deleteLikeFromFilm(Integer filmId, Integer userId) {
-        final Film film = filmStorage.getFilmById(filmId);
-        final User user = userStorage.getUserById(userId);
-        log.info("Пользователь {} удаляет лайк у фильма {}", user.getName(), film.getName());
-
-        film.getLikes().remove(userId);
-        log.info("Пользователь {} удалил лайк у фильма {}", user.getName(), film.getName());
-        return film;
+        return filmStorage.deleteLikeFromFilm(filmId, userId);
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        return filmStorage.getFilms().stream()
-                .sorted((film1, film2) -> film2.getLikes().size() - film1.getLikes().size())
-                .limit(count)
-                .collect(Collectors.toList());
+        return filmStorage.getPopularFilms(count);
+    }
+
+    public List<Genre> getAllGenres() {
+        return filmStorage.getAllGenres();
+    }
+
+    public Genre getGenreById(Integer genreId) {
+        return filmStorage.getGenreById(genreId);
+    }
+
+    public List<MPA> getAllMPA() {
+        return filmStorage.getAllMPA();
+    }
+
+    public MPA getMPAById(Integer mpaId) {
+        return filmStorage.getMPAById(mpaId);
     }
 
     public void validate(Film film, String messagePath) throws ValidationException {
@@ -90,14 +87,28 @@ public class FilmService {
                     " фильм, т.к. максимальная длина описания 200 символов.");
         }
 
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+        if (film.getReleaseDate().isBefore(creationDate)) {
             throw new ValidationException("Не удалось " + messagePath + " фильм, " +
-                    "т.к. дата релиза не может быть раньше даты рождения кино.");
+                    "т.к. дата релиза не может быть раньше даты создания кино.");
         }
 
         if (film.getDuration() < 0) {
             throw new ValidationException("Не удалось " + messagePath + " фильм, " +
                     "т.к. продолжительность фильма должна быть положительной.");
+        }
+
+        if (film.getLikes() == null) {
+            film.setLikes(new HashSet<>());
+        }
+
+        if (film.getGenres() == null) {
+            film.setGenres(new HashSet<>());
+        }
+
+        if (film.getMpa() == null) {
+            film.setMpa(new MPA(1, "G", 0));
+        } else if (film.getMpa().getId() > 5) {
+            throw new RuntimeException("Указан несуществующий рейнтинг возрастного ограничения");
         }
     }
 }
