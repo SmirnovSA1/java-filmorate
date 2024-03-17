@@ -39,7 +39,7 @@ public class FilmMapper implements RowMapper<Film> {
         String query = "SELECT g.* " +
                 "FROM genres AS g " +
                 "JOIN films_genres AS fg ON g.genre_id = fg.genre_id " +
-                "WHERE fg.film_id = ?)";
+                "WHERE fg.film_id = ?";
         List<Genre> filmGenres = jdbcTemplate.query(query, new GenreMapper(), film.getId());
         film.setGenres(new HashSet<>(filmGenres));
     }
