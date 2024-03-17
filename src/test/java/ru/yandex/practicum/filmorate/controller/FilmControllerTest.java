@@ -337,7 +337,7 @@ class FilmControllerTest {
                 "Аристократ на коляске нанимает в сиделки бывшего заключенного. " +
                         "Искрометная французская комедия с Омаром Си",
                 LocalDate.of(2011, 9, 23), 112,
-                Set.of( new Genre(4, "Драма"),
+                Set.of(new Genre(4, "Драма"),
                         new Genre(5, "Мелодрама")),
                 new MPA(3, "PG-13", 13), new HashSet<>());
         film5 = new Film(5, "Побег из Шоушенка",
