@@ -33,7 +33,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             new Genre(5, "Мелодрама"),
             new Genre(6, "Ужасы")
     );
-    private final List<MPA> MPAList = List.of(
+    private final List<MPA> mpaList = List.of(
             new MPA(1, "G", 0),
             new MPA(2, "PG", 0),
             new MPA(3, "PG-13", 13),
@@ -136,11 +136,11 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<MPA> getAllMPA() {
-        return MPAList;
+        return mpaList;
     }
 
     @Override
     public MPA getMPAById(Integer mpaId) {
-        return MPAList.get(mpaId);
+        return mpaList.get(mpaId);
     }
 }
