@@ -191,13 +191,14 @@ class FilmControllerTest {
 
     @Test
     void deleteFilmByIdInvalid() {
-        Exception exc = assertThrows(NotFoundException.class, () -> filmService.getFilmById(1));
-        assertEquals("Фильм с id: 1 не найден", exc.getMessage());
-        assertFalse(filmService.getFilms().remove(new Film(1, "Защитник",
+        Film film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
-                new MPA(4, "R", 17), new HashSet<>())));
+                new MPA(4, "R", 17), new HashSet<>());
+        Exception exc = assertThrows(NotFoundException.class, () -> filmService.getFilmById(1));
+        assertEquals("Фильм с id: 1 не найден", exc.getMessage());
+        assertFalse(filmService.getFilms().remove(film1));
     }
 
     @Test
