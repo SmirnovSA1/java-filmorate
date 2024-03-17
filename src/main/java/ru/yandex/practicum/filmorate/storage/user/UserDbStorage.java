@@ -182,9 +182,9 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> getFriendList(Integer userId) {
         String query = "SELECT u.* " +
-                "FROM users AS u " +
-                "JOIN friendships AS fs ON u.user_id = fs.user_id " +
-                "WHERE user_id = ?;";
+                "FROM users u " +
+                "JOIN friendships fs ON u.user_id = fs.friend_id " +
+                "WHERE fs.user_id = ?;";
 
         return jdbcTemplate.query(query, new UserMapper(jdbcTemplate), userId);
     }
