@@ -4,25 +4,23 @@ import lombok.*;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class User {
     private Integer id;
-    @NotBlank
+    @NotBlank(message = "email обязателен к заполнению")
     @Email
     private String email;
-    @NotBlank
-    @Pattern(regexp = "^[a-zA-Z]+$")
+    @NotBlank(message = "login обязателен к заполнению")
     private String login;
     private String name;
-    @Past
-    @NotNull
+    @Past(message = "birthday должен быть раньше текущей даты")
+    @NotNull(message = "birthday обязателен к заполнению")
     private LocalDate birthday;
-    private final Set<Friendship> friends = new HashSet<>();
+    private Set<Integer> friends;
     private static int count = 0;
 
     public void generateId() {
