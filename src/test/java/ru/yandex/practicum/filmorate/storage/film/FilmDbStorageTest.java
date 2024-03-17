@@ -40,14 +40,6 @@ class FilmDbStorageTest {
         userStorage = new UserDbStorage(jdbcTemplate);
         filmStorage = new FilmDbStorage(jdbcTemplate, userStorage);
         filmService = new FilmService(filmStorage);
-
-        List<MPA> mpaSet = List.of(
-                new MPA(1, "G", 0),
-                new MPA(2, "PG", 0),
-                new MPA(3, "PG-13", 13),
-                new MPA(4, "R", 17),
-                new MPA(5, "NC-17", 18)
-                );
     }
 
     @Test

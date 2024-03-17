@@ -49,7 +49,7 @@ public class FilmDbStorage implements FilmStorage {
                 "m.mpa_min_age " +
                 "FROM films f " +
                 "JOIN mpa m ON f.film_mpa_id = m.mpa_id " +
-                "WHERE film_id = ?";
+                "WHERE f.film_id = ?";
         Film foundFilm;
 
         try {
