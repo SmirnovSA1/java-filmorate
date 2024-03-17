@@ -17,4 +17,12 @@ public interface UserStorage {
     public Map<String, String> deleteUserById(Integer id);
 
     public Map<String, String> deleteAllUsers();
+
+    public User addFriend(Integer userId, Integer friendId);
+
+    public User deleteFriend(Integer userId, Integer friendId);
+
+    public List<User> getFriendList(Integer userId);
+
+    public List<User> getCommonFriendList(Integer userId, Integer otherId);
 }
