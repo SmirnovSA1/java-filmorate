@@ -30,24 +30,6 @@ class FilmControllerTest {
     @Qualifier("inMemoryFilmStorage")
     private FilmStorage filmStorage;
     private FilmService filmService;
-    private Film film1;
-    private Film film2;
-    private Film film3;
-    private Film film4;
-    private Film film5;
-    private Film film6;
-    private Film film7;
-    private Film film8;
-    private Film film9;
-    private Film film10;
-    private Film film11;
-    private Film film12;
-    private User user1;
-    private User user2;
-    private User user3;
-    private User user4;
-    private User user5;
-    private User user6;
 
     @BeforeEach
     void setUp() {
@@ -65,7 +47,7 @@ class FilmControllerTest {
 
     @Test
     void createFilmValid() {
-        film1 = new Film(1, "Защитник",
+        Film film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
@@ -105,7 +87,7 @@ class FilmControllerTest {
 
     @Test
     void getFilmByIdValid() {
-        film1 = new Film(1, "Защитник",
+        Film film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
@@ -117,7 +99,7 @@ class FilmControllerTest {
 
     @Test
     void getFilmByIdInvalid() {
-        film1 = new Film(1, "Защитник",
+        Film film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
@@ -130,7 +112,7 @@ class FilmControllerTest {
         final List<Film> filmList = filmService.getFilms();
         assertNotEquals(filmList.size(), 2);
 
-        film2 = new Film(2, "Начало",
+        Film film2 = new Film(2, "Начало",
                 "Запутанный фильм Кристофера Нолана",
                 LocalDate.of(2010, 7, 8), 148,
                 Set.of(new Genre(4, "Триллер"),
@@ -143,7 +125,7 @@ class FilmControllerTest {
     @Test
     void getFilms() {
         assertEquals(filmService.getFilms().size(), 0);
-        film1 = new Film(1, "Защитник",
+        Film film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
@@ -154,7 +136,7 @@ class FilmControllerTest {
 
     @Test
     void updateFilmValid() {
-        film1 = new Film(1, "Защитник",
+        Film film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
@@ -196,7 +178,7 @@ class FilmControllerTest {
 
     @Test
     void deleteFilmByIdValid() {
-        film1 = new Film(1, "Защитник",
+        Film film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
@@ -211,24 +193,28 @@ class FilmControllerTest {
     void deleteFilmByIdInvalid() {
         Exception exc = assertThrows(NotFoundException.class, () -> filmService.getFilmById(1));
         assertEquals("Фильм с id: 1 не найден", exc.getMessage());
-        assertFalse(filmService.getFilms().remove(film1));
+        assertFalse(filmService.getFilms().remove(new Film(1, "Защитник",
+                "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
+                LocalDate.of(2015, 11, 10), 123,
+                Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
+                new MPA(4, "R", 17), new HashSet<>())));
     }
 
     @Test
     void deleteAllFilms() {
-        film1 = new Film(1, "Защитник",
+        Film film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
                 new MPA(4, "R", 17), new HashSet<>());
-        film2 = new Film(2, "Начало",
+        Film film2 = new Film(2, "Начало",
                 "Запутанный фильм Кристофера Нолана",
                 LocalDate.of(2010, 7, 8), 148,
                 Set.of(new Genre(4, "Триллер"),
                         new Genre(5, "Документальный"),
                         new Genre(6, "Боевик")),
                 new MPA(5, "NC-17", 18), new HashSet<>());
-        film3 = new Film(3, "Зеленая миля",
+        Film film3 = new Film(3, "Зеленая миля",
                 "Пол Эджкомб — начальник блока смертников в тюрьме «Холодная гора», каждый из узников " +
                         "которого однажды проходит «зеленую милю» по пути к месту казни. Пол повидал много " +
                         "заключённых и надзирателей за время работы. Однако гигант Джон Коффи, обвинённый в " +
@@ -246,12 +232,12 @@ class FilmControllerTest {
 
     @Test
     void addLikeToFilm() {
-        film1 = new Film(1, "Защитник",
+        Film film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
                 new MPA(4, "R", 17), new HashSet<>());
-        film2 = new Film(2, "Начало",
+        Film film2 = new Film(2, "Начало",
                 "Запутанный фильм Кристофера Нолана",
                 LocalDate.of(2010, 7, 8), 148,
                 Set.of(new Genre(4, "Триллер"),
@@ -261,10 +247,10 @@ class FilmControllerTest {
         filmService.createFilm(film1);
         filmService.createFilm(film2);
 
-        user1 = new User(1,"test@test.ru",
+        User user1 = new User(1,"test@test.ru",
                 "testLogin", "Test-name",
                 LocalDate.of(2015, 11, 10), new HashSet<>());
-        user2 = new User(2,"test2@test2.ru",
+        User user2 = new User(2,"test2@test2.ru",
                 "testLogin2", "Test-name2",
                 LocalDate.of(1994, 5, 12), new HashSet<>());
         userStorage.createUser(user1);
@@ -279,12 +265,12 @@ class FilmControllerTest {
 
     @Test
     void deleteLikeFromFilm() {
-        film1 = new Film(1, "Защитник",
+        Film film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
                 new MPA(4, "R", 17), new HashSet<>());
-        film2 = new Film(2, "Начало",
+        Film film2 = new Film(2, "Начало",
                 "Запутанный фильм Кристофера Нолана",
                 LocalDate.of(2010, 7, 8), 148,
                 Set.of(new Genre(4, "Триллер"),
@@ -294,10 +280,10 @@ class FilmControllerTest {
         filmService.createFilm(film1);
         filmService.createFilm(film2);
 
-        user1 = new User(1,"test@test.ru",
+        User user1 = new User(1,"test@test.ru",
                 "testLogin", "Test-name",
                 LocalDate.of(2015, 11, 10), new HashSet<>());
-        user2 = new User(2,"test2@test2.ru",
+        User user2 = new User(2,"test2@test2.ru",
                 "testLogin2", "Test-name2",
                 LocalDate.of(1994, 5, 12), new HashSet<>());
         userStorage.createUser(user1);
@@ -313,19 +299,19 @@ class FilmControllerTest {
 
     @Test
     void getPopularFilms() {
-        film1 = new Film(1, "Защитник",
+        Film film1 = new Film(1, "Защитник",
                 "биографический фильм режиссёра Питера Ландесмана с Уиллом Смитом",
                 LocalDate.of(2015, 11, 10), 123,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
                 new MPA(4, "R", 17), new HashSet<>());
-        film2 = new Film(2, "Начало",
+        Film film2 = new Film(2, "Начало",
                 "Запутанный фильм Кристофера Нолана",
                 LocalDate.of(2010, 7, 8), 148,
                 Set.of(new Genre(4, "Триллер"),
                         new Genre(5, "Документальный"),
                         new Genre(6, "Боевик")),
                 new MPA(5, "NC-17", 18), new HashSet<>());
-        film3 = new Film(3, "Зеленая миля",
+        Film film3 = new Film(3, "Зеленая миля",
                 "Пол Эджкомб — начальник блока смертников в тюрьме «Холодная гора», каждый из узников " +
                         "которого однажды проходит «зеленую милю» по пути к месту казни. Пол повидал много " +
                         "заключённых и надзирателей за время работы. Однако гигант Джон Коффи, обвинённый в " +
@@ -333,14 +319,14 @@ class FilmControllerTest {
                 LocalDate.of(1999, 12, 6), 189,
                 Set.of(new Genre(3, "Мультфильм")),
                 new MPA(2, "PG", 0), new HashSet<>());
-        film4 = new Film(4, "1+1",
+        Film film4 = new Film(4, "1+1",
                 "Аристократ на коляске нанимает в сиделки бывшего заключенного. " +
                         "Искрометная французская комедия с Омаром Си",
                 LocalDate.of(2011, 9, 23), 112,
                 Set.of(new Genre(4, "Драма"),
                         new Genre(5, "Мелодрама")),
                 new MPA(3, "PG-13", 13), new HashSet<>());
-        film5 = new Film(5, "Побег из Шоушенка",
+        Film film5 = new Film(5, "Побег из Шоушенка",
                 "Бухгалтер Энди Дюфрейн обвинён в убийстве собственной жены и её любовника. Оказавшись " +
                         "в тюрьме под названием Шоушенк, он сталкивается с жестокостью и беззаконием, царящими по " +
                         "обе стороны решётки. Каждый, кто попадает в эти стены, становится их рабом до конца жизни. " +
@@ -350,13 +336,13 @@ class FilmControllerTest {
                 Set.of(new Genre(2, "Триллер"),
                 new Genre(6, "Ужасы")),
                 new MPA(4, "R", 17), new HashSet<>());
-        film6 = new Film(6, "Форрест Гамп",
+        Film film6 = new Film(6, "Форрест Гамп",
                 "Сидя на автобусной остановке, Форрест Гамп — не очень умный, но добрый и открытый " +
                         "парень — рассказывает случайным встречным историю своей необыкновенной жизни.",
                 LocalDate.of(1994, 6, 23), 142,
                 Set.of(new Genre(1, "Комедия")),
                 new MPA(1, "G", 0), new HashSet<>());
-        film7 = new Film(7, "Интерстеллар",
+        Film film7 = new Film(7, "Интерстеллар",
                 "Когда засуха, пыльные бури и вымирание растений приводят человечество к " +
                         "продовольственному кризису, коллектив исследователей и учёных отправляется сквозь " +
                         "червоточину (которая предположительно соединяет области пространства-времени через " +
@@ -366,7 +352,7 @@ class FilmControllerTest {
                 Set.of(new Genre(2, "Триллер"),
                         new Genre(4, "Драма")),
                 new MPA(5, "NC-17", 18), new HashSet<>());
-        film8 = new Film(8, "Унесённые призраками",
+        Film film8 = new Film(8, "Унесённые призраками",
                 "Тихиро с мамой и папой переезжает в новый дом. Заблудившись по дороге, они оказываются " +
                         "в странном пустынном городе, где их ждет великолепный пир. Родители с жадностью " +
                         "набрасываются на еду и к ужасу девочки превращаются в свиней, став пленниками злой " +
@@ -375,7 +361,7 @@ class FilmControllerTest {
                 LocalDate.of(2001, 7, 20), 125,
                 Set.of(new Genre(3, "Мультфильм")),
                 new MPA(2, "PG", 0), new HashSet<>());
-        film9 = new Film(9, "Властелин колец: Возвращение короля",
+        Film film9 = new Film(9, "Властелин колец: Возвращение короля",
                 "Повелитель сил тьмы Саурон направляет свою бесчисленную армию под стены Минас-Тирита, " +
                         "крепости Последней Надежды. Он предвкушает близкую победу, но именно это мешает ему " +
                         "заметить две крохотные фигурки — хоббитов, приближающихся к Роковой Горе, где им предстоит " +
@@ -383,14 +369,14 @@ class FilmControllerTest {
                 LocalDate.of(2003, 12, 1), 201,
                 Set.of(new Genre(1, "Комедия"), new Genre(2, "Драма")),
                 new MPA(4, "R", 17), new HashSet<>());
-        film10 = new Film(10, "Бойцовский клуб",
+        Film film10 = new Film(10, "Бойцовский клуб",
                 "Страховой работник разрушает рутину своей благополучной жизни. Культовая драма " +
                         "по книге Чака Паланика",
                 LocalDate.of(1999, 9, 10), 139,
                 Set.of(new Genre(2, "Триллер"),
                         new Genre(6, "Ужасы")),
                 new MPA(4, "R", 17), new HashSet<>());
-        film11 = new Film(11, "Список Шиндлера",
+        Film film11 = new Film(11, "Список Шиндлера",
                 "Фильм рассказывает реальную историю загадочного Оскара Шиндлера, члена нацистской " +
                         "партии, преуспевающего фабриканта, спасшего во время Второй мировой войны почти 1200 евреев.",
                 LocalDate.of(1993, 11, 30), 195,
@@ -398,7 +384,7 @@ class FilmControllerTest {
                         new Genre(5, "Документальный"),
                         new Genre(6, "Боевик")),
                 new MPA(5, "NC-17", 18), new HashSet<>());
-        film12 = new Film(12, "Шрэк",
+        Film film12 = new Film(12, "Шрэк",
                 "Жил да был в сказочном государстве большой зеленый великан по имени Шрэк. " +
                         "Жил он в гордом одиночестве в лесу, на болоте, которое считал своим. Но однажды " +
                         "злобный коротышка — лорд Фаркуад, правитель волшебного королевства, безжалостно " +
@@ -421,22 +407,22 @@ class FilmControllerTest {
         filmService.createFilm(film11);
         filmService.createFilm(film12);
 
-        user1 = new User(1,"test@test.ru",
+        User user1 = new User(1,"test@test.ru",
                 "testLogin", "Test-name",
                 LocalDate.of(2015, 11, 10), new HashSet<>());
-        user2 = new User(2,"test2@test2.ru",
+        User user2 = new User(2,"test2@test2.ru",
                 "testLogin2", "Test-name2",
                 LocalDate.of(1994, 5, 12), new HashSet<>());
-        user3 = new User(3,"test3@test3.ru",
+        User user3 = new User(3,"test3@test3.ru",
                 "testLogin3", "Test-name3",
                 LocalDate.of(1993, 1, 16), new HashSet<>());
-        user4 = new User(4,"test4@test4.ru",
+        User user4 = new User(4,"test4@test4.ru",
                 "testLogin4", "Test-name4",
                 LocalDate.of(1978, 7, 23), new HashSet<>());
-        user5 = new User(5,"test5@test5.ru",
+        User user5 = new User(5,"test5@test5.ru",
                 "testLogin5", "Test-name5",
                 LocalDate.of(1996, 11, 20), new HashSet<>());
-        user6 = new User(6,"test6@test6.ru",
+        User user6 = new User(6,"test6@test6.ru",
                 "testLogin6", "Test-name6",
                 LocalDate.of(1969, 6, 16), new HashSet<>());
 
