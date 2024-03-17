@@ -32,44 +32,12 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
-        if (film.getReleaseDate().isBefore(creationDate)) {
-            log.error("Произошла ошибка при вызове метода createFilm");
-            throw new ValidationException("Не удалось добавить фильм, " +
-                    "т.к. дата релиза не может быть раньше даты создания кино.");
-        }
-
-        if (film.getLikes() == null) {
-            film.setLikes(new HashSet<>());
-        }
-
-        if (film.getGenres() == null) {
-            film.setGenres(new HashSet<>());
-        }
-
-        if (film.getMpa() == null) {
-            film.setMpa(new MPA(1, "G", 0));
-        } else if (film.getMpa().getId() > 5) {
-            throw new RuntimeException("Указан несуществующий рейнтинг возрастного ограничения");
-        }
-
+        validate(film, "создать");
         return filmStorage.createFilm(film);
     }
 
     public Film updateFilm(Film film) {
-        if (film.getLikes() == null) {
-            film.setLikes(new HashSet<>());
-        }
-
-        if (film.getGenres() == null) {
-            film.setGenres(new HashSet<>());
-        }
-
-        if (film.getMpa() == null) {
-            film.setMpa(new MPA(1, "G", 0));
-        } else if (film.getMpa().getId() > 5) {
-            throw new RuntimeException("Указан несуществующий рейнтинг возрастного ограничения");
-        }
-
+        validate(film, "обновить");
         return filmStorage.updateFilm(film);
     }
 
@@ -121,12 +89,26 @@ public class FilmService {
 
         if (film.getReleaseDate().isBefore(creationDate)) {
             throw new ValidationException("Не удалось " + messagePath + " фильм, " +
-                    "т.к. дата релиза не может быть раньше даты рождения кино.");
+                    "т.к. дата релиза не может быть раньше даты создания кино.");
         }
 
         if (film.getDuration() < 0) {
             throw new ValidationException("Не удалось " + messagePath + " фильм, " +
                     "т.к. продолжительность фильма должна быть положительной.");
+        }
+
+        if (film.getLikes() == null) {
+            film.setLikes(new HashSet<>());
+        }
+
+        if (film.getGenres() == null) {
+            film.setGenres(new HashSet<>());
+        }
+
+        if (film.getMpa() == null) {
+            film.setMpa(new MPA(1, "G", 0));
+        } else if (film.getMpa().getId() > 5) {
+            throw new RuntimeException("Указан несуществующий рейнтинг возрастного ограничения");
         }
     }
 }
